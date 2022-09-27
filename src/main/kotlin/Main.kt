@@ -1,8 +1,12 @@
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import mail.ru.*
 import org.openqa.selenium.WebDriver
 import kotlin.random.*
 
 fun main(args: Array<String>) {
+
     while (true) {
         printMenu()
         when(readln().trimIndent().lowercase()) {
@@ -24,7 +28,17 @@ fun main(args: Array<String>) {
             }
             "3" -> {
                 val driver = initChrome("user-data-dir=C:\\Users\\matve\\AppData\\Local\\Google\\Chrome\\User Data")
-                printVkNews(parseVkNews(driver))
+                val news = parseVkNews(driver)
+
+
+                val json1 = Json.encodeToString(jsonOne(news))
+                val json2 = Json.encodeToString(jsonTwo(news))
+                val json3 = Json.encodeToString(jsonThree(news))
+
+                writeToFileJson(json1, "json1.txt")
+                writeToFileJson(json2, "json2.txt")
+                writeToFileJson(json3, "json3.txt")
+
                 closeBrowser(driver)
             }
             "exit" -> {
@@ -68,3 +82,4 @@ fun printVkNews(news : List<News>) {
                 "6. ${i.Text}\n")
     }
 }
+

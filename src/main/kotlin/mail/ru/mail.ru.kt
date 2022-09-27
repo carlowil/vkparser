@@ -9,7 +9,6 @@ import kotlinx.coroutines.*
 import org.openqa.selenium.WebElement
 import kotlin.random.*
 
-
 fun initChrome(strOption: String): WebDriver {
     val options = ChromeOptions()
     WebDriverManager.chromedriver().setup()
@@ -84,12 +83,14 @@ fun fillGenderField(driver : WebDriver, xpath: String) {
 
 fun parseVkNews(driver : WebDriver) : List<News>{
     driver.get("https://vk.com/feed")
+
     val vknews = mutableListOf<News>()
+
     val feedPosts = mutableListOf<WebElement>()
     val feedRowElements = driver.findElement(By.id("feed_rows"))
     feedRowElements.findElements(By.className("feed_row")).forEach { feedPosts.add(it.findElement(By.tagName("div"))) }
     for(i in feedPosts) {
-        if(i.isDisplayed && !i.getAttribute("id").isNullOrEmpty()) {
+        if(i.isDisplayed && !i.getAttribute("data-post-id").isNullOrEmpty()) {
 
             val id = i.getAttribute("id").toString()
             val img = mutableListOf<String>()
@@ -117,7 +118,6 @@ fun parseVkNews(driver : WebDriver) : List<News>{
             } catch (_: Exception) {
 
             }
-
             vknews.add(News(id, text, countLike, countViews, img, href))
         }
     }
@@ -142,4 +142,25 @@ private fun findViews(views : String) : Int {
         ++i
     }
     return result.toInt()
+}
+
+
+fun jsonOne(news : List<News>) : List<Json1>{
+    val json1 = mutableListOf<Json1>()
+    news.forEach { json1.add(Json1(it.Id, it.Text)) }
+    return json1.toList()
+}
+
+
+fun jsonTwo(news : List<News>) : List<Json2>{
+    val json2 = mutableListOf<Json2>()
+    news.forEach { json2.add(Json2(it.Id, it.Img)) }
+    return json2.toList()
+}
+
+
+fun jsonThree(news : List<News>) : List<Json3> {
+    val json3 = mutableListOf<Json3>()
+    news.forEach { json3.add(Json3(it.Id, it.Href)) }
+    return json3.toList()
 }
